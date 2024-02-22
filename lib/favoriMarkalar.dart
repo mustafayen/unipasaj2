@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:unipasaj/class/markaClass.dart';
-import 'package:unipasaj/widgets/cards.dart';
-
 import 'widgets/home/home_card.dart';
 
 class ExploreTab extends StatefulWidget {
@@ -87,7 +85,6 @@ class _ExploreTabState extends State<ExploreTab> {
       }).catchError((error) {
         print("Marka kaldırılırken hata oluştu: $error");
       });
-
       // Favori markalar listesinden markayı kaldır
       setState(() {
         favoriMarkalar.removeWhere((marka) => marka.id == id);
