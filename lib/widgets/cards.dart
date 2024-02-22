@@ -221,79 +221,54 @@ Card markaCard(
                     showModalBottomSheet(
                       context: context,
                       builder: (BuildContext context) {
-                        return FutureBuilder<String>(
-                          future: fetchNameFromFirestore(
-                              userId!), // Firestore'dan diğer verileri getir
-                          builder: (BuildContext context,
-                              AsyncSnapshot<String> snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              // Veri yüklenene kadar bekleyen durum
-                              return Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.5,
-                                child: Center(
-                                  child:
-                                      CircularProgressIndicator(), // veya başka bir yükleme göstergesi
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                // Resmi göstermek için Image.network widget'ını kullanın
+                                SizedBox(height: 20),
+                                Text("İndirimi almak için telefonu görevliye gösterin."),
+                                FutureBuilder<String>(
+                                  future: getImageUrl(imageurl), // Resim URL'sini getir
+                                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      // Veri yüklenene kadar bekleyen durum
+                                      return CircularProgressIndicator();
+                                    } else {
+                                      if (snapshot.hasError) {
+                                        // Hata durumu
+                                        return Text('Resim yüklenirken bir hata oluştu: ${snapshot.error}');
+                                      } else {
+                                        // Veri başarıyla yüklendiği durum
+                                        return snapshot.data != null ? Image.network(snapshot.data!) : SizedBox(); // Resim mevcutsa göster, değilse boş bir SizedBox göster
+                                      }
+                                    }
+                                  },
                                 ),
-                              );
-                            } else {
-                              if (snapshot.hasError) {
-                                // Hata durumu
-                                return Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.5,
-                                  child: Center(
-                                    child: Text(
-                                        'Veri yüklenirken bir hata oluştu: ${snapshot.error}'),
-                                  ),
-                                );
-                              } else {
-                                // Veri başarıyla yüklendiği durum
-                                return Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.5,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        // Resmi göstermek için Image.network widget'ını kullanın
-                                        SizedBox(height: 20),
-                                        Text(
-                                            "İndirimi almak için telefonu görevliye gösterin."),
-                                        FutureBuilder<String>(
-                                          future: getImageUrl(
-                                              imageurl), // Resim URL'sini getir
-                                          builder: (BuildContext context,
-                                              AsyncSnapshot<String> snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              // Veri yüklenene kadar bekleyen durum
-                                              return CircularProgressIndicator();
-                                            } else {
-                                              if (snapshot.hasError) {
-                                                // Hata durumu
-                                                return Text(
-                                                    'Resim yüklenirken bir hata oluştu: ${snapshot.error}');
-                                              } else {
-                                                // Veri başarıyla yüklendiği durum
-                                                return snapshot.data != null
-                                                    ? Image.network(
-                                                        snapshot.data!)
-                                                    : SizedBox(); // Resim mevcutsa göster, değilse boş bir SizedBox göster
-                                              }
-                                            }
-                                          },
-                                        ),
-                                        Text(user!.uid),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          },
+                                FutureBuilder<String>(
+                                  future: fetchNameFromFirestore(userId!), // Firestore'dan diğer verileri getir
+                                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      // Veri yüklenene kadar bekleyen durum
+                                      return CircularProgressIndicator();
+                                    } else {
+                                      if (snapshot.hasError) {
+                                        // Hata durumu
+                                        return Text('Veri yüklenirken bir hata oluştu: ${snapshot.error}');
+                                      } else {
+                                        // Veri başarıyla yüklendiği durum
+                                        return snapshot.data != null ? Text(snapshot.data!) : SizedBox();
+                                      }
+                                    }
+                                  },
+                                ),
+
+                                Text(user!.uid),
+                              ],
+                            ),
+                          ),
                         );
                       },
                     );
